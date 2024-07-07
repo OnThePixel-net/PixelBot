@@ -145,14 +145,38 @@ client.on("messageCreate", async (message) => {
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
 
-  const triggerWords = ["hi", "guten tag", "hallo", "moin"];
+  const botMentioned = message.mentions.has(client.user.id);
+  const containsPixelbot = message.content.toLowerCase().includes("pixelbot");
+  const messageContent = message.content.toLowerCase();
 
+  const triggerWords = ["hi", "guten tag", "hallo", "moin"];
   const responsePhrases = [
     "Moin moin!",
     "Hi, wie geht's?",
     "Guten Tag, Reisender!",
     "Howdy, Partner!",
   ];
+  const mentionResponsePhrases = ["Hmm?", "Yeah?", "Was ist denn?"];
+  if (botMentioned || containsPixelbot) {
+    const response =
+      mentionResponsePhrases[
+        Math.floor(Math.random() * mentionResponsePhrases.length)
+      ];
+    message.channel.send(response);
+    return;
+  }
+
+  const containsTriggerWord = triggerWords.some((word) => {
+    const regex = new RegExp(`\\b${word}\\b`, "i");
+    return regex.test(messageContent);
+  });
+
+  if (containsTriggerWord) {
+    const response =
+      responsePhrases[Math.floor(Math.random() * responsePhrases.length)];
+    message.channel.send(response);
+    return;
+  }
 
   const jokes = [
     "Meine Gitarre ist zu leise um mittelalterliche Musik zu spielen. Ich brauch eine Laute.",
@@ -174,11 +198,6 @@ client.on("messageCreate", async (message) => {
     "Du suchst die IP? onthepixel.net ist es. Wir sehen uns da!",
   ];
 
-  const messageContent = message.content.toLowerCase();
-  const containsTriggerWord = triggerWords.some((word) => {
-    const regex = new RegExp(`\\b${word}\\b`, "i");
-    return regex.test(messageContent);
-  });
   const wantsJoke = /erzähl.*witz|erzähle.*witz/.test(messageContent);
   const asksForIP = /\bip\b/.test(messageContent);
   const asksForCreator =
@@ -187,6 +206,9 @@ client.on("messageCreate", async (message) => {
     /wer ist dein macher/ |
     /wer hat dich geschaffen/.test(messageContent);
 
+  if (!botMentioned && !containsPixelbot) {
+    return;
+  }
   if (asksForCreator) {
     const response =
       creatorPhrases[Math.floor(Math.random() * creatorPhrases.length)];
