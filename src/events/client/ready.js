@@ -1,6 +1,6 @@
 const { Client } = require("discord.js");
 const mongoose = require("mongoose");
-const mongoURL = process.env.mongoURL;
+const mongoURL = process.env.MONGO_URL;
 const chalk = require("chalk");
 
 module.exports = {

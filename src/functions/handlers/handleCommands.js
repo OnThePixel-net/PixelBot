@@ -32,9 +32,9 @@ module.exports = (client) => {
       }
     }
 
-    const clientId = process.env.clientID;
-    const guildId = process.env.guildID;
-    const rest = new REST({ version: "9" }).setToken(process.env.token);
+    const clientId = process.env.CLIENT_ID;
+    const guildId = process.env.GUILD_ID;
+    const rest = new REST({ version: "9" }).setToken(process.env.TOKEN);
     try {
       console.log(
         chalk.blueBright("Started refreshing application (/) commands.")
