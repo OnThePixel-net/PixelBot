@@ -1,10 +1,10 @@
 require("dotenv").config();
-const { token } = process.env;
+const { TOKEN } = process.env;
 const GiveawaysManager = require("./giveaway");
 const { Client, Collection, GatewayIntentBits } = require("discord.js");
 const fs = require("fs");
 const counting = require("./Schemas/countingSchema");
-// const axios = require("axios");
+const axios = require("axios");
 
 const client = new Client({
   intents: [
@@ -30,7 +30,7 @@ for (const folder of functionFolders) {
 
 // Welcome
 client.on("guildMemberAdd", async (member) => {
-  const channelID = await process.env.channelID;
+  const channelID = await process.env.CHANNEL_ID;
   const channel = member.guild.channels.cache.get(channelID);
   const message = `**Welcome to OnThePixel.net, ${member}!**`;
 
@@ -42,7 +42,7 @@ client.on("guildMemberAdd", async (member) => {
 
 // Auto role
 client.on("guildMemberAdd", async (member) => {
-  const role = process.env.roleID;
+  const role = process.env.ROLE_ID;
   const giveRole = await member.guild.roles.cache.get(role);
 
   member.roles.add(giveRole);
@@ -142,159 +142,181 @@ client.on("messageCreate", async (message) => {
 // Counting end
 
 // Response start
-client.on("messageCreate", async (message) => {
-  if (message.author.bot) return;
-
-  const botMentioned = message.mentions.has(client.user.id);
-  const containsPixelbot = message.content.toLowerCase().includes("pixelbot");
-  const messageContent = message.content.toLowerCase();
-
-  const triggerWords = ["hi", "guten tag", "hallo", "moin"];
-  const responsePhrases = [
-    "Moin moin!",
-    "Hi, wie geht's?",
-    "Guten Tag, Reisender!",
-    "Howdy, Partner!",
-  ];
-  const mentionResponsePhrases = ["Hmm?", "Yeah?", "Was ist denn?"];
-  if (botMentioned || containsPixelbot) {
-    const response =
-      mentionResponsePhrases[
-        Math.floor(Math.random() * mentionResponsePhrases.length)
-      ];
-    message.channel.send(response);
-    return;
-  }
-
-  const containsTriggerWord = triggerWords.some((word) => {
-    const regex = new RegExp(`\\b${word}\\b`, "i");
-    return regex.test(messageContent);
-  });
-
-  if (containsTriggerWord) {
-    const response =
-      responsePhrases[Math.floor(Math.random() * responsePhrases.length)];
-    message.channel.send(response);
-    return;
-  }
-
-  const jokes = [
-    "Meine Gitarre ist zu leise um mittelalterliche Musik zu spielen. Ich brauch eine Laute.",
-    "Mir ist kalt - ich geh mal in die Ecke. Da sind 90 Grad.",
-    "Sagt die eine Kerze zur anderen: Du, ist Wasser eigentlich gefährlich? - Sagt die andere: Davon kannst Du ausgehen.",
-  ];
-
-  const creatorPhrases = [
-    "Ich wurde von einem sehr schlauem Entwickler erschaffen.",
-    "Ein kluger Köpfe hat mich zum Leben erweckt.",
-    "Ich bin das Produkt vieler Stunden harter Arbeit und Kreativität von <@982984144567017493>.",
-    "Es war ein langer Weg, aber <@982984144567017493> hat mich erschaffen.",
-    "Ich bin das Werk von <@982984144567017493>.",
-  ];
-
-  const ipPhrases = [
-    "Klar, die IP ist onthepixel.net!",
-    "Du kannst dich mit der IP onthepixel.net zum Server verbinden.",
-    "Du suchst die IP? onthepixel.net ist es. Wir sehen uns da!",
-  ];
-
-  const wantsJoke = /erzähl.*witz|erzähle.*witz/.test(messageContent);
-  const asksForIP = /\bip\b/.test(messageContent);
-  const asksForCreator =
-    /wer hat dich gemacht/ |
-    /wer hat dich erstellt/ |
-    /wer ist dein macher/ |
-    /wer hat dich geschaffen/.test(messageContent);
-
-  if (!botMentioned && !containsPixelbot) {
-    return;
-  }
-  if (asksForCreator) {
-    const response =
-      creatorPhrases[Math.floor(Math.random() * creatorPhrases.length)];
-    message.channel.send(response);
-    return;
-  }
-  if (containsTriggerWord) {
-    await message.channel.sendTyping();
-    const randomResponse =
-      responsePhrases[Math.floor(Math.random() * responsePhrases.length)];
-    await message.reply(randomResponse);
-  } else if (wantsJoke) {
-    await message.channel.sendTyping();
-    const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
-    await message.reply(randomJoke);
-  } else if (asksForIP) {
-    await message.channel.sendTyping();
-    const randomIPPhrase =
-      ipPhrases[Math.floor(Math.random() * ipPhrases.length)];
-    await message.reply(randomIPPhrase);
-  }
-});
-// Response end
-
-// Chat Bot logic
-// RAPIDAPI BARD API ISNT WORKING ATM
-
 // client.on("messageCreate", async (message) => {
 //   if (message.author.bot) return;
 
-//   await message.channel.sendTyping();
+//   const botMentioned = message.mentions.has(client.user.id);
+//   const containsPixelbot = message.content.toLowerCase().includes("pixelbot");
+//   const messageContent = message.content.toLowerCase();
 
-//   let input = {
-//     method: 'GET',
-//     url: 'https://google-bard1.p.rapidapi.com/',
-//     headers: {
-//       message: message.content,
-//       'X-RapidAPI-Key': '', // YOUR OWN RAPIDAPI KEY
-//       'X-RapidAPI-Host': 'google-bard1.p.rapidapi.com'
-//     },
-//   };
-//   try {
-//     const output = await axios.request(input);
-//     const response = output.data.response;
+//   const triggerWords = ["hi", "guten tag", "hallo", "moin"];
+//   const responsePhrases = [
+//     "Moin moin!",
+//     "Hi, wie geht's?",
+//     "Guten Tag, Reisender!",
+//     "Howdy, Partner!",
+//   ];
+//   const mentionResponsePhrases = ["Hmm?", "Yeah?", "Was ist denn?"];
+//   if (botMentioned || containsPixelbot) {
+//     const response =
+//       mentionResponsePhrases[
+//         Math.floor(Math.random() * mentionResponsePhrases.length)
+//       ];
+//     message.channel.send(response);
+//     return;
+//   }
 
-//     if (response.length > 2000) {
-//       const chunks = response.match(/.{1,2000}/g);
+//   const containsTriggerWord = triggerWords.some((word) => {
+//     const regex = new RegExp(`\\b${word}\\b`, "i");
+//     return regex.test(messageContent);
+//   });
 
-//       for (let i = 0; i < chunks.length; i++) {
-//         message.author.send(chunks[i]).catch((err) => {
-//           console.error(err);
-//           message.author
-//             .send(
-//               "I'm heaving trouble finding that request. Because I am an AI on Discord, I don't have time to process long requests."
-//             )
-//             .catch((err) => {
-//               console.error(err);
-//             });
-//         });
-//       }
-//     } else {
-//       await message.author.send(response).catch((err) => {
-//         console.error(err);
-//         message.author
-//           .send(
-//             "I'm heaving trouble finding that request. Because I am an AI on Discord, I don't have time to process long requests."
-//           )
-//           .catch((err) => {
-//             console.error(err);
-//           });
-//       });
-//     }
-//   } catch (e) {
-//     console.error(e);
-//     message.author
-//       .send(
-//         "I'm heaving trouble finding that request. Because I am an AI on Discord, I don't have time to process long requests."
-//       )
-//       .catch((err) => {
-//         console.error(err);
-//       });
+//   if (containsTriggerWord) {
+//     const response =
+//       responsePhrases[Math.floor(Math.random() * responsePhrases.length)];
+//     message.channel.send(response);
+//     return;
+//   }
+
+//   const jokes = [
+//     "Meine Gitarre ist zu leise um mittelalterliche Musik zu spielen. Ich brauch eine Laute.",
+//     "Mir ist kalt - ich geh mal in die Ecke. Da sind 90 Grad.",
+//     "Sagt die eine Kerze zur anderen: Du, ist Wasser eigentlich gefährlich? - Sagt die andere: Davon kannst Du ausgehen.",
+//   ];
+
+//   const creatorPhrases = [
+//     "Ich wurde von einem sehr schlauem Entwickler erschaffen.",
+//     "Ein kluger Köpfe hat mich zum Leben erweckt.",
+//     "Ich bin das Produkt vieler Stunden harter Arbeit und Kreativität von <@982984144567017493>.",
+//     "Es war ein langer Weg, aber <@982984144567017493> hat mich erschaffen.",
+//     "Ich bin das Werk von <@982984144567017493>.",
+//   ];
+
+//   const ipPhrases = [
+//     "Klar, die IP ist onthepixel.net!",
+//     "Du kannst dich mit der IP onthepixel.net zum Server verbinden.",
+//     "Du suchst die IP? onthepixel.net ist es. Wir sehen uns da!",
+//   ];
+
+//   const wantsJoke = /erzähl.*witz|erzähle.*witz/.test(messageContent);
+//   const asksForIP = /\bip\b/.test(messageContent);
+//   const asksForCreator =
+//     /wer hat dich gemacht/ |
+//     /wer hat dich erstellt/ |
+//     /wer ist dein macher/ |
+//     /wer hat dich geschaffen/.test(messageContent);
+
+//   if (!botMentioned && !containsPixelbot) {
+//     return;
+//   }
+//   if (asksForCreator) {
+//     const response =
+//       creatorPhrases[Math.floor(Math.random() * creatorPhrases.length)];
+//     message.channel.send(response);
+//     return;
+//   }
+//   if (containsTriggerWord) {
+//     await message.channel.sendTyping();
+//     const randomResponse =
+//       responsePhrases[Math.floor(Math.random() * responsePhrases.length)];
+//     await message.reply(randomResponse);
+//   } else if (wantsJoke) {
+//     await message.channel.sendTyping();
+//     const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
+//     await message.reply(randomJoke);
+//   } else if (asksForIP) {
+//     await message.channel.sendTyping();
+//     const randomIPPhrase =
+//       ipPhrases[Math.floor(Math.random() * ipPhrases.length)];
+//     await message.reply(randomIPPhrase);
 //   }
 // });
+// Response end
+
+// Chat Bot logic
+
+client.on("messageCreate", async (message) => {
+  if (message.author.bot) return;
+
+  await message.channel.sendTyping();
+
+  const messageContent = message.content.toLowerCase();
+  const asksForIP = /\bip\b/.test(messageContent);
+
+  if (asksForIP) {
+    const ipPhrases = [
+      "Klar, die IP ist onthepixel.net!",
+      "Du kannst dich mit der IP onthepixel.net zum Server verbinden.",
+      "Du suchst die IP? onthepixel.net ist es. Wir sehen uns da!",
+    ];
+    const randomIPPhrase =
+      ipPhrases[Math.floor(Math.random() * ipPhrases.length)];
+    await message.reply(randomIPPhrase);
+    return;
+  }
+
+  if (!message.mentions.has(client.user.id)) return;
+
+  function sanitizeContent(content) {
+    return content.replace(/@(\w+)/gi, "@\u200B$1");
+  }
+
+  const encodedMessage = encodeURIComponent(sanitizeContent(message.content));
+
+  let input = {
+    method: "GET",
+    url: "https://google-bard1.p.rapidapi.com/",
+    headers: {
+      message: encodedMessage,
+      "x-rapidapi-key": process.env.RAPIDAPI_KEY,
+      "x-rapidapi-host": "google-bard1.p.rapidapi.com",
+      userid: process.env.GEMENI_USER_ID,
+      key: process.env.MAKERSUITE_KEY,
+    },
+  };
+  try {
+    const output = await axios.request(input);
+    const response = output.data.response;
+
+    if (response.length > 2000) {
+      const chunks = response.match(/.{1,2000}/g);
+
+      for (let i = 0; i < chunks.length; i++) {
+        await message.channel.send(chunks[i]).catch((err) => {
+          console.error(err);
+          message.channel
+            .send({
+              content:
+                "I'm having trouble processing that request due to its length.",
+              ephemeral: true,
+            })
+            .catch(console.error);
+        });
+      }
+    } else {
+      await message.channel.send(response).catch((err) => {
+        console.error(err);
+        message.channel
+          .send({
+            content: "I'm having trouble processing that request.",
+            ephemeral: true,
+          })
+          .catch(console.error);
+      });
+    }
+  } catch (e) {
+    console.error(e);
+    message.channel
+      .send({
+        content: "There was an error processing your request.",
+        ephemeral: true,
+      })
+      .catch(console.error);
+  }
+});
 
 // Chat bot logic end
 
 client.handleEvents();
 client.handleCommands();
-client.login(token);
+client.login(TOKEN);
