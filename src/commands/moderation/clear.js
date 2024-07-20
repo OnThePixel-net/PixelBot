@@ -3,12 +3,12 @@ const { PermissionsBitField } = require("discord.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("clear")
-    .setDescription("Clear a certain amount of messages from a specific user")
+    .setName("delete")
+    .setDescription("Deletes a certain amount of messages from a specific user")
     .addIntegerOption((option) =>
       option
         .setName("amount")
-        .setDescription("Number of messages to clear")
+        .setDescription("Number of messages to delete")
         .setRequired(true)
         .setMinValue(1)
         .setMaxValue(100)
@@ -16,14 +16,14 @@ module.exports = {
     .addUserOption((option) =>
       option
         .setName("user")
-        .setDescription("User whose messages to clear")
+        .setDescription("User to delete messages from")
         .setRequired(false)
     ),
 
   async execute(interaction) {
     if (
       !interaction.member.permissions.has(
-        PermissionsBitField.Flags.Administrator
+        PermissionsBitField.Flags.ManageMessages
       )
     ) {
       await interaction.reply({
@@ -54,21 +54,24 @@ module.exports = {
                 (userToDelete ? message.author.id === userToDelete.id : true)
             )
             .first(amount);
+
+          if (fourteenDaysAgo) {
+            interaction.reply({
+              content: "❌ Messages are older than 14 days.",
+              ephemeral: true,
+            });
+            return;
+          }
+
           return interaction.channel.bulkDelete(filteredMessages);
         })
-        .then(() => {
-          interaction.reply({
-            content: `✅ Done! Deleted ${amount} messages.`,
-            ephemeral: true,
-          });
-        })
-        .catch((err) => {
-          console.error(err);
-          interaction.reply({
-            content:
-              "There was an error trying to clear messages in this channel!",
-            ephemeral: true,
-          });
+        .then((deletedMessages) => {
+          if (deletedMessages) {
+            interaction.reply({
+              content: `✅ Done! Deleted ${deletedMessages.size} messages.`,
+              ephemeral: true,
+            });
+          }
         });
     }
   },
