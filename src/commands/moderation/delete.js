@@ -55,13 +55,13 @@ module.exports = {
             )
             .first(amount);
 
-          if (fourteenDaysAgo) {
-            interaction.reply({
-              content: "❌ Messages are older than 14 days.",
-              ephemeral: true,
-            });
-            return;
-          }
+          // if (fourteenDaysAgo) {
+          //   interaction.reply({
+          //     content: "❌ Messages are older than 14 days.",
+          //     ephemeral: true,
+          //   });
+          //   return;
+          // }
 
           return interaction.channel.bulkDelete(filteredMessages);
         })

@@ -238,8 +238,6 @@ client.on("messageCreate", async (message) => {
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
 
-  await message.channel.sendTyping();
-
   const messageContent = message.content.toLowerCase();
   const asksForIP = /\bip\b/.test(messageContent);
 
@@ -251,17 +249,26 @@ client.on("messageCreate", async (message) => {
     ];
     const randomIPPhrase =
       ipPhrases[Math.floor(Math.random() * ipPhrases.length)];
+    await message.channel.sendTyping();
     await message.reply(randomIPPhrase);
     return;
   }
 
   if (!message.mentions.has(client.user.id)) return;
 
-  function sanitizeContent(content) {
-    return content.replace(/@(\w+)/gi, "@\u200B$1");
+  const mentionRegex = new RegExp(`<@!?${client.user.id}>`, "g");
+  const sanitizedContent = message.content.replace(mentionRegex, "").trim();
+  if (sanitizedContent.length === 0) {
+    await message.reply({
+      content: "You need provide a message.",
+      ephemeral: true,
+    });
+    return;
   }
 
   const encodedMessage = encodeURIComponent(sanitizeContent(message.content));
+
+  await message.channel.sendTyping();
 
   let input = {
     method: "GET",

@@ -59,4 +59,4 @@ const giveawaySchema = new mongoose.Schema(
   { id: false }
 );
 
-module.exports = mongoose.model("giveaways_x", giveawaySchema);
+module.exports = mongoose.model("giveaway", giveawaySchema);

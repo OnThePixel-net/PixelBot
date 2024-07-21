@@ -26,6 +26,9 @@ importers:
       discord-api-types:
         specifier: ^0.37.69
         version: 0.37.90
+      discord-gamecord:
+        specifier: ^4.4.2
+        version: 4.4.2
       discord-giveaways:
         specifier: ^6.0.1
         version: 6.0.1(discord.js@14.15.3)
@@ -323,6 +326,9 @@ packages:
   discord-api-types@0.37.90:
     resolution: {integrity: sha512-lpOJSGrqHuXoM4FV/2HtjoaJpCClGFHpRNIdZEW8zPINlsCHNSfIwA2EQ8dxeE6k1QhhTuM9ZlOGVYXoU7FLgA==}
 
+  discord-gamecord@4.4.2:
+    resolution: {integrity: sha512-SRrfAG9MLjK0Xw/2+hN9HfmIqkl+0TVPTwQXXOvwXpzMBJbpsY+KliTl6lQOur8Qb61rhOAmwMPWv/idQDYYMA==}
+
   discord-giveaways@6.0.1:
     resolution: {integrity: sha512-hs6Vtb62VdlV7NfB93Phaxc8FW0cH4N1Nkb0bXVZ2npgn73yGOFVmdp8bBP5gsC2ady9OAXXI8Gb66t1IddkFw==}
     engines: {node: '>=16.9.0'}
@@ -454,6 +460,9 @@ packages:
   highlight.js@11.9.0:
     resolution: {integrity: sha512-fJ7cW7fQGCYAkgv4CPfwFHrfd/cLS4Hau96JuJ+ZTOWhjnhoeN1ub1tFmALm/+lW5z4WCAuAV9bm05AP0mS6Gw==}
     engines: {node: '>=12.0.0'}
+
+  html-entities@2.5.2:
+    resolution: {integrity: sha512-K//PSRMQk4FZ78Kyau+mZurHn3FH0Vwr+H36eE0rPbeYkRRi9YxceYPhuN60UwWorxyKHhqoAJl2OFKa4BVtaA==}
 
   http-proxy-agent@7.0.2:
     resolution: {integrity: sha512-T1gkAiYYDWYx3V5Bmyu7HcfcvL7mUrTWiM6yOfa3PIphViJ/gFPbvidQ+veqSOHci/PxBcDabeUNCzpOODJZig==}
@@ -1209,6 +1218,16 @@ snapshots:
 
   discord-api-types@0.37.90: {}
 
+  discord-gamecord@4.4.2:
+    dependencies:
+      discord.js: 14.15.3
+      html-entities: 2.5.2
+      node-fetch: 2.7.0
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+
   discord-giveaways@6.0.1(discord.js@14.15.3):
     dependencies:
       deepmerge-ts: 4.3.0
@@ -1357,6 +1376,8 @@ snapshots:
   hex-to-rgba@2.0.1: {}
 
   highlight.js@11.9.0: {}
+
+  html-entities@2.5.2: {}
 
   http-proxy-agent@7.0.2:
     dependencies:
